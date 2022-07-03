@@ -44,7 +44,7 @@ def submit():
     password = request.form['password']
     
     # Inserting drivers already signed into users table
-    sqlQuery = f'''SELECT * FROM users WHERE login = '{login}' and 
+    sqlQuery = f'''SELECT userid, login, tipo, idoriginal FROM users WHERE login = '{login}' and 
                            password = MD5(CONCAT('{password}',userID))'''
     df = pd.read_sql_query(sqlQuery,conn)
     
