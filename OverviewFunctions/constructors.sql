@@ -19,8 +19,6 @@ begin
 end;
 $$;
 
--- select constructor_victories_count('Red Bull');
-
 
 create function constructors_drivers_count(constructor_name varchar) returns bigint
 language plpgsql
@@ -41,8 +39,6 @@ begin
 end;
 $$;
 
--- select constructors_drivers_count('Red Bull');
-
 
 create function constructors_first_and_last_year(constructor_name varchar, out first_year int, out last_year int) returns setof record
 language plpgsql
@@ -53,8 +49,8 @@ begin
         select min(r.year) , max(r.year)
             from results
             join constructors c on c.constructorid = results.constructorid and c.name = constructor_name
-            join races r on results.raceid = r.raceid);
+            join races r on results.raceid = r.raceid
+        );
 end;
 $$;
 
--- select * from constructors_first_and_last_year('aa');
