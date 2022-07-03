@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS USERS (
+    UserID SERIAL PRIMARY KEY,
+    Login TEXT NOT NULL UNIQUE,
+    Password TEXT NOT NULL,
+    Tipo TEXT NOT NULL,
+    IdOriginal INTEGER
+    );
+	
+SELECT * FROM USERS
+	
+--UPDATE users SET password = MD5(CONCAT(password, user_id))
