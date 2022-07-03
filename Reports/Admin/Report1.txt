@@ -1,0 +1,6 @@
+select
+    s.status, count(*)
+from results
+    join status s on results.statusid = s.statusid
+group by grouping sets (s.status)
+order by (s.status)
