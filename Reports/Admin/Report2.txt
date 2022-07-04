@@ -1,0 +1,32 @@
+CREATE OR REPLACE VIEW aeroportos_brasileiros AS
+	SELECT a.name as nome_aeroporto, a.type as tipo_aeroporto, a.iatacode as IATA_code, a.latdeg as latitude, a.longdeg as longitude, 
+	b.name as name_pais, b.continent as continente_pais, 
+	c.name as name_cidade, c.population as populacao_cidade
+	FROM 		AIRPORTS 	AS a
+	INNER JOIN COUNTRIES 	AS b
+	ON a.isocountry = b.code
+	INNER JOIN GEOCITIES15k	AS c
+	ON a.city = c.name and c.country = b.code 
+	-- Essa ultima verificacao é necessaria porque cidades de países diferentes podem ter o mesmo nome
+	WHERE b.name = 'Brazil' and a.type in ('medium_airport ','large_airport  ')
+
+
+-- Cidade para teste: Trindade. Possui 3 registros e nenhum aeroporto.
+
+CREATE EXTENSION IF NOT EXISTS Cube;
+CREATE EXTENSION IF NOT EXISTS EarthDistance;
+
+SELECT * 
+FROM (
+	SELECT *, ROW_NUMBER() OVER (PARTITION BY nome_aeroporto ORDER BY earth_distance) as RN 
+	FROM (
+		SELECT A.nome_aeroporto, A.tipo_aeroporto, A.name_cidade as cidade_aeroporto, A.IATA_code,
+		A.name_pais, A.continente_pais, C.name as name_cidade, earth_distance (ll_to_earth(A.latitude, A.longitude), ll_to_earth(C.lat , C.long)),
+			C.population, C.geonameid as id_geografico_cidade
+			FROM aeroportos_brasileiros		AS A
+			INNER JOIN geocities15k 		AS C
+			ON (earth_distance (ll_to_earth(A.latitude, A.longitude), ll_to_earth(C.lat , C.long))) < 100000
+			where C.name = 'Trindade'
+	) AS A
+) AS A
+ORDER BY id_geografico_cidade, nome_aeroporto
