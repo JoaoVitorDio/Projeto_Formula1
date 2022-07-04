@@ -40,7 +40,7 @@ sql_text = text("INSERT INTO users VALUES (DEFAULT,'admin','admin','Administrado
 result = conn.execute(sql_text)
 
 
-# Inserting drivers already signed into users table
+# Inserting driver already signed into users table
 df = pd.read_sql_query('''SELECT CONCAT(driverref,'_d') AS login, driverref as password, 
                        driverid as IdOriginal FROM driver''',conn)
 df['tipo'] = 'Piloto'

@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+{% block content %}
+<h1>Driver View</h1>
+<p>Hello, {{ name }}</p>
+<h2>Overview</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Information</th>
+        <th>Quantity</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Number of victories</td>
+        <td>{{ count_victories }}</td>
+    </tr>
+    <tr>
+        <td>Active date range</td>
+        <td>{{ start_year }}-{{ end_year }}</td>
+    </tr>
+    </tbody>
+</table>
+{% endblock %}
+
