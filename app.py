@@ -128,8 +128,29 @@ def constructor_view():
         return render_template('generic_error.html', message='User not allowed to see this content')
 
     name = session.get('username')
+    constructor_ref = name[0:-2]
 
-    return render_template('constructors/overview.html', name=name)
+    sql_query = f'''
+    SELECT * FROM constructor_victories_count('{constructor_ref}'); 
+                           '''
+    count_victories = pd.read_sql_query(sql_query, conn)
+
+    sql_query = f'''
+    SELECT * FROM constructors_drivers_count('{constructor_ref}'); 
+                           '''
+    count_drivers = pd.read_sql_query(sql_query, conn)
+
+    sql_query = f'''
+    SELECT * FROM constructors_first_and_last_year('{constructor_ref}'); 
+                           '''
+    date_range = pd.read_sql_query(sql_query, conn)
+
+    return render_template('constructors/overview.html',
+                           name=name,
+                           count_victories=count_victories.loc[0][0],
+                           count_drivers=count_drivers.loc[0][0],
+                           start_year=date_range.loc[0][0],
+                           end_year=date_range.loc[0][1])
 
 
 @app.route('/driver', methods=['GET'])
