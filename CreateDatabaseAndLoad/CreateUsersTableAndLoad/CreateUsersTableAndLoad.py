@@ -1,16 +1,19 @@
 import os
 import pandas as pd
 from sqlalchemy import create_engine, text
+from flask.cli import load_dotenv
+
 
 #Reading environment variables to get database name and password
-database_name = os.environ['DatabaseName']
-postgres_password = os.environ['PostgresPassword']
+# Creating environment based on .env file
+basedir = os.getcwd()
+load_dotenv(os.path.join(basedir, '.env'))
 
 DATABASES = {
     'production':{
-        'NAME': database_name,
-        'USER': 'postgres',
-        'PASSWORD': postgres_password,
+        'NAME': os.environ['DATABASE_NAME'],
+        'USER': os.environ['DATABASE_USERNAME'],
+        'PASSWORD':  os.environ['DATABASE_PASSWORD'],
         'HOST': '127.0.0.1',
         'PORT': 5432,
     },
