@@ -40,10 +40,24 @@ app.secret_key = 'super_secret'
 
 
 def execute_sql_query_from_file(filename):
-    sql = open('myquery.sql', 'r')
+    sql = open(filename, 'r')
     df = read_sql_query(sql.read(), conn)
     sql.close()
     return df
+
+
+def check_permission():
+    if 'username' in session:
+        name = session.get('username')
+
+        if name.endswith('_c'):
+            return 'constructor'
+        elif name.endswith('_d'):
+            return 'driver'
+        else:
+            return 'admin'
+    else:
+        return render_template('generic_error.html', message='User not logged in. Please go to login page.')
 
 
 @app.route('/')
@@ -64,22 +78,15 @@ def submit():
     df = pd.read_sql_query(sqlQuery, conn)
 
     if len(df.index) > 0:
-        # check user type and display adequate buttom to redirect
-        if login == 'admin':
-            return redirect('admin')
-        else:
-            # saves username into session
-            session['username'] = login
+        # saves username into session
+        session['username'] = login
 
-            if login.endswith('_c'):
-                return redirect('constructor')
-            elif login.endswith('_d'):
-                return redirect('driver')
-            else:
-                return render_template('/login/generic_error.html', message='Wrong suffix. You could not be a driver '
-                                                                            'or a constructor.')
+        # check user type and redirect to adequate page
+        user_type = check_permission()
+        return redirect(user_type)
+
     else:
-        return render_template('/login/generic_error.html', message='Wrong username or password. Try again.')
+        return render_template('generic_error.html', message='Wrong username or password. Try again.')
 
 
 @app.route('/admin', methods=['GET'])
