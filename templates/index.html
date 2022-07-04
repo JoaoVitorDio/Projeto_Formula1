@@ -1,21 +1,17 @@
 <!doctype html>
-
-
 <head><title>Formula1 Project</title>
     <meta charset=utf-8>
     <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 </head>
 <body>
-<img src="/static/Formula1Logo.png" alt="header" height="250px"><br><br>
+<img id="logo" src="/static/Formula1Logo.png" alt="header" width="30%"><br><br>
 
-<form action="/submit" method="POST">
-    <label for="login">Login:</label><br>
-    <input type="text" id="login" name="login"><br><br>
-    <label for="password">Password:</label><br>
-    <input type="password" id="password" name="password"><br><br>
-
-    <button><a>Send</a></button><br>
-</form>
-<img src="/static/phoenix.png" alt="phoenix" width="250" height="250">
+<main role="main" class="container">
+    <div class="jumbotron">
+        {% block content %}{% endblock %}
+    </div>
+</main>
 
 </body>
