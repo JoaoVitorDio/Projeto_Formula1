@@ -1,5 +1,4 @@
 --===============================================================
---  Caetano Traina Júnior -- março de 2022 ----------- ==========
 --  Criar o ESQUEMA para A base de dados sobre Formula 1       ==
 --  Tempo aproximado de execução: 13 secs. (Dell-Sol)
 /*-------------------------------------------------------------==
