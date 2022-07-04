@@ -1,0 +1,32 @@
+{% extends "index.html" %}
+{% block content %}
+<h1>Hello, {{name}}</h1>
+<h2>Overview</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Information</th>
+        <th>Quantity</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Number of pilots</td>
+        <td>{{count_drivers}}</td>
+    </tr>
+    <tr>
+        <td>Number of constructors</td>
+        <td>{{ count_constructors }}</td>
+    </tr>
+    <tr>
+        <td>Number of races</td>
+        <td>{{ count_races }}</td>
+    </tr>
+    <tr>
+        <td>Number of seasons</td>
+        <td>{{ count_seasons }}</td>
+    </tr>
+    </tbody>
+</table>
+{% endblock %}
+

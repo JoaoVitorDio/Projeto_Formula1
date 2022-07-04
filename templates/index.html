@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
 </head>
 <body>
+<a  href="{{ url_for('.index') }}">
 <img id="logo" src="/static/Formula1Logo.png" alt="header" width="30%"><br><br>
-
+</a>
 <main role="main" class="container">
     <div class="jumbotron">
         {% block content %}{% endblock %}

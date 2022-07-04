@@ -1,8 +1,9 @@
 import os
 import pandas as pd
 from flask.cli import load_dotenv
+from pandas import read_sql_query
 from sqlalchemy import create_engine, text
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, session
 
 # Creating environment based on .env file
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -35,11 +36,19 @@ engine = create_engine(engine_string)
 conn = engine.connect()
 
 app = Flask(__name__)
+app.secret_key = 'super_secret'
+
+
+def execute_sql_query_from_file(filename):
+    sql = open('myquery.sql', 'r')
+    df = read_sql_query(sql.read(), conn)
+    sql.close()
+    return df
 
 
 @app.route('/')
 def index():
-    return render_template('login_form.html')
+    return render_template('/login/login_form.html')
 
 
 @app.route('/submit', methods=['POST'])
@@ -55,9 +64,68 @@ def submit():
     df = pd.read_sql_query(sqlQuery, conn)
 
     if len(df.index) > 0:
-        return render_template('success.html', login=login, password=password)
+        # check user type and display adequate buttom to redirect
+        if login == 'admin':
+            return redirect('admin')
+        else:
+            # saves username into session
+            session['username'] = login
+
+            if login.endswith('_c'):
+                return redirect('constructor')
+            elif login.endswith('_d'):
+                return redirect('driver')
+            else:
+                return render_template('/login/generic_error.html', message='Wrong suffix. You could not be a driver '
+                                                                            'or a constructor.')
     else:
-        return 'hm'
+        return render_template('/login/generic_error.html', message='Wrong username or password. Try again.')
+
+
+@app.route('/admin', methods=['GET'])
+def admin_view():
+    sql_query = f'''
+    SELECT DISTINCT COUNT(*) FROM driver; 
+                           '''
+    count_drivers = pd.read_sql_query(sql_query, conn)
+
+    sql_query = f'''
+    SELECT DISTINCT COUNT(*) FROM constructors; 
+                           '''
+    count_constructors = pd.read_sql_query(sql_query, conn)
+
+    sql_query = f'''
+    SELECT DISTINCT COUNT(*) FROM races; 
+                           '''
+    count_races = pd.read_sql_query(sql_query, conn)
+
+    sql_query = f'''
+    SELECT DISTINCT COUNT(*) FROM seasons; 
+                           '''
+    count_seasons = pd.read_sql_query(sql_query, conn)
+
+    return render_template('/admin/overview.html',
+                           name='Admin',
+                           count_drivers=count_drivers.loc[0][0],
+                           count_races=count_races.loc[0][0],
+                           count_seasons=count_seasons.loc[0][0],
+                           count_constructors=count_constructors.loc[0][0])
+
+
+@app.route('/constructor', methods=['GET'])
+def constructor_view():
+    if 'username' in session:
+        name = session.get('username')
+
+    return render_template('constructors/overview.html', name=name)
+
+
+@app.route('/driver', methods=['GET'])
+def driver_view():
+    if 'username' in session:
+        name = session.get('username')
+
+    return render_template('driver/overview.html', name=name)
 
 
 if __name__ == "__main__":
