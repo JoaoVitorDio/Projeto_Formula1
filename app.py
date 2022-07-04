@@ -91,6 +91,9 @@ def submit():
 
 @app.route('/admin', methods=['GET'])
 def admin_view():
+    if 'admin' != check_permission():
+        return render_template('generic_error.html', message='User not allowed to see this content')
+
     sql_query = f'''
     SELECT DISTINCT COUNT(*) FROM driver; 
                            '''
@@ -121,16 +124,20 @@ def admin_view():
 
 @app.route('/constructor', methods=['GET'])
 def constructor_view():
-    if 'username' in session:
-        name = session.get('username')
+    if 'constructor' != check_permission():
+        return render_template('generic_error.html', message='User not allowed to see this content')
+
+    name = session.get('username')
 
     return render_template('constructors/overview.html', name=name)
 
 
 @app.route('/driver', methods=['GET'])
 def driver_view():
-    if 'username' in session:
-        name = session.get('username')
+    if 'driver' != check_permission():
+        return render_template('generic_error.html', message='User not allowed to see this content')
+
+    name = session.get('username')
 
     return render_template('driver/overview.html', name=name)
 
