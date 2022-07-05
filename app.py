@@ -40,24 +40,25 @@ app.secret_key = 'super_secret'
 
 
 def check_permission():
-    name = session.get('username', None)
+    user = session.get('user', None)
 
-    if name:
-        if name.endswith('_c'):
+    if user:
+        if user['type'] == 'Escuderia':
             return 'constructor'
-        elif name.endswith('_d'):
+        elif user['type'] == 'Piloto':
             return 'driver'
         else:
             return 'admin'
+
     else:
         return render_template('generic_error.html', message='User not logged in. Please go to login page.')
 
 
 @app.route('/')
 def index():
-    name = session.get('username', None)
+    user = session.get('user', None)
 
-    if name:
+    if user:
         return redirect(check_permission())
     else:
         return render_template('/login/login_form.html')
@@ -65,7 +66,7 @@ def index():
 
 @app.route('/logout')
 def logout():
-    session.pop('username')
+    session.pop('user')
     return render_template('/login/login_form.html')
 
 
@@ -76,15 +77,21 @@ def submit():
 
     # Inserting driver already signed into users table
     sqlQuery = f'''
-    SELECT userid, login, tipo, idoriginal FROM users WHERE login = '{login}' and 
+    SELECT userid, login, tipo, idoriginal, tipo FROM users WHERE login = '{login}' and 
                            password = MD5(CONCAT('{password}',userID))
                            '''
     df = pd.read_sql_query(sqlQuery, conn)
 
     if len(df.index) > 0:
+        user_list = df.to_dict('record')
         # saves username into session
-        session['username'] = login
 
+        session['user'] = {
+            'id': user_list[0]['idoriginal'],
+            'username': user_list[0]['login'],
+            'user_ref': login[0:-2],
+            'type': user_list[0]['tipo']
+        }
         # check user type and redirect to adequate page
         user_type = check_permission()
         return redirect(user_type)
@@ -132,8 +139,8 @@ def constructor_view():
         return render_template('generic_error.html', message='User not allowed to see this content')
 
     # getting constructor info
-    name = session.get('username')
-    constructor_ref = name[0:-2]
+    user = session.get('user')
+    constructor_ref = user['user_ref']
 
     # executing overview functions
     sql_query = f'''
@@ -152,7 +159,7 @@ def constructor_view():
     date_range = pd.read_sql_query(sql_query, conn)
 
     return render_template('constructors/overview.html',
-                           name=name,
+                           name=user['username'],
                            count_victories=count_victories.loc[0][0],
                            count_drivers=count_drivers.loc[0][0],
                            start_year=date_range.loc[0]['first_year'],
@@ -165,11 +172,13 @@ def driver_view():
         return render_template('generic_error.html', message='User not allowed to see this content')
 
     # getting driver info
-    name = session.get('username')
-    driver_ref = name[0:-2]
+    user = session.get('user')
+    driver_ref = user['user_ref']
+
     sql_query = f'''
     SELECT * FROM driver where driverref = '{driver_ref}'; 
-                           '''
+                    '''
+
     driver_info = pd.read_sql_query(sql_query, conn)
     driver_forename = driver_info.loc[0]['forename']
     driver_surname = driver_info.loc[0]['surname']
@@ -185,7 +194,7 @@ def driver_view():
     date_range = pd.read_sql_query(sql_query, conn)
 
     return render_template('driver/overview.html',
-                           name=name,
+                           name=user['username'],
                            count_victories=count_victories.loc[0][0],
                            start_year=date_range.loc[0]['first_year'],
                            end_year=date_range.loc[0]['last_year'])
@@ -259,8 +268,8 @@ def search_drivers():
             # create a list of dict with search result
             list = driver_info.to_dict('records')
 
-            name = session.get('username')
-            constructor_ref = name[0:-2]
+            user = session.get('user')
+            constructor_ref = user['user_ref']
 
             sql_query = f'''
                 SELECT DISTINCT driverid from results where constructorid = (select constructorid from constructors where constructorref = '{constructor_ref}')
@@ -346,8 +355,8 @@ def report_three():
     if 'constructor' != check_permission():
         return render_template('generic_error.html', message='User not allowed to see this content')
 
-    name = session.get('username')
-    constructor_ref = name[0:-2]
+    user = session.get('user')
+    constructor_ref = user['user_ref']
 
     sql_query = f'''
         SELECT * FROM constructor_list_drivers('{constructor_ref}');
@@ -363,8 +372,8 @@ def report_four():
     if 'constructor' != check_permission():
         return render_template('generic_error.html', message='User not allowed to see this content')
 
-    name = session.get('username')
-    constructor_ref = name[0:-2]
+    user = session.get('user')
+    constructor_ref = user['user_ref']
 
     sql_query = f'''
                 SELECT s.status as status, count(*) as count from results r
@@ -382,8 +391,8 @@ def report_four():
 
 @app.route('/driver/reports', methods=['GET'])
 def driver_reports():
-    name = session.get('username')
-    return render_template('/driver/dashboard_reports.html', name=name)
+    user = session.get('user')
+    return render_template('/driver/dashboard_reports.html', name=user['username'])
 
 
 @app.route('/report-05')
@@ -391,8 +400,8 @@ def report_five():
     if 'driver' != check_permission():
         return render_template('generic_error.html', message='User not allowed to see this content')
 
-    name = session.get('username')
-    driver_ref = name[0:-2]
+    user = session.get('user')
+    driver_ref = user['user_ref']
 
     sql_query = f'''
                 SELECT ra.name, EXTRACT(YEAR FROM ra.date) AS race_year, COUNT(r.position) as vitorias 
@@ -415,8 +424,8 @@ def report_six():
     if 'driver' != check_permission():
         return render_template('generic_error.html', message='User not allowed to see this content')
 
-    name = session.get('username')
-    driver_ref = name[0:-2]
+    user = session.get('user')
+    driver_ref = user['user_ref']
 
     sql_query = f'''
             SELECT s.status as status, count(*) as count from results r
