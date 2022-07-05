@@ -7,7 +7,7 @@ Link do repositório: https://github.com/JoaoVitorDio/Projeto_Formula1
 ### Como executar
 #### Pré-Requisitos
 * PostgreSQL e PgAdmin4;
-* Configure as três variáveis de ambiente necessárias para o projeto em uma cópia do arquivo .env.sample:
+* Configure as três variáveis de ambiente necessárias para o projeto em uma cópia do arquivo .env.sample (nomeie esta cópia como ".env"):
 	*  DATABASE_NAME = 'nome_da_base_de_dados_criada_no_postgres'
 	* DATABASE_PASSWORD = 'senha_do_usuario_no_servidor_do_banco_de_dados'
 	* DATABASE_USERNAME = 'usuario_do_postgres'
