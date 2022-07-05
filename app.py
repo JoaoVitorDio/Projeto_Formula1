@@ -1,8 +1,7 @@
 import os
 import pandas as pd
 from flask.cli import load_dotenv
-from pandas import read_sql_query
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 from flask import Flask, render_template, request, redirect, session
 
 # Creating environment based on .env file
@@ -79,7 +78,7 @@ def submit():
     sqlQuery = f'''
     SELECT userid, login, tipo, idoriginal, tipo FROM users WHERE login = '{login}' and 
                            password = MD5(CONCAT('{password}',userID))
-                           '''
+                    '''
     df = pd.read_sql_query(sqlQuery, conn)
 
     if len(df.index) > 0:
@@ -107,22 +106,22 @@ def admin_view():
 
     sql_query = f'''
     SELECT DISTINCT COUNT(*) FROM driver; 
-                           '''
+                    '''
     count_drivers = pd.read_sql_query(sql_query, conn)
 
     sql_query = f'''
     SELECT DISTINCT COUNT(*) FROM constructors; 
-                           '''
+                    '''
     count_constructors = pd.read_sql_query(sql_query, conn)
 
     sql_query = f'''
     SELECT DISTINCT COUNT(*) FROM races; 
-                           '''
+                     '''
     count_races = pd.read_sql_query(sql_query, conn)
 
     sql_query = f'''
     SELECT DISTINCT COUNT(*) FROM seasons; 
-                           '''
+                   '''
     count_seasons = pd.read_sql_query(sql_query, conn)
 
     return render_template('/admin/overview.html',
@@ -145,17 +144,17 @@ def constructor_view():
     # executing overview functions
     sql_query = f'''
     SELECT * FROM constructor_victories_count('{constructor_ref}'); 
-                           '''
+                   '''
     count_victories = pd.read_sql_query(sql_query, conn)
 
     sql_query = f'''
     SELECT * FROM constructors_drivers_count('{constructor_ref}'); 
-                           '''
+                    '''
     count_drivers = pd.read_sql_query(sql_query, conn)
 
     sql_query = f'''
     SELECT * FROM constructors_first_and_last_year('{constructor_ref}'); 
-                           '''
+                    '''
     date_range = pd.read_sql_query(sql_query, conn)
 
     return render_template('constructors/overview.html',
@@ -185,7 +184,8 @@ def driver_view():
 
     # executing overview functions
     sql_query = f'''
-    SELECT * FROM drivers_victories('{driver_forename}', '{driver_surname}')                   '''
+    SELECT * FROM drivers_victories('{driver_forename}', '{driver_surname}')                   
+                    '''
     count_victories = pd.read_sql_query(sql_query, conn)
 
     sql_query = f'''
@@ -216,7 +216,7 @@ def create_constructors():
 
             sql_query = f'''
                 INSERT INTO constructors (constructorid, constructorref, name, nationality, url)  VALUES ('{constructorid}', '{constructor_ref}','{name}','{nationality}','{url}');
-            '''
+                            '''
             conn.execute(sql_query)
 
             # check user type and redirect to adequate page
@@ -243,7 +243,7 @@ def create_drivers():
 
             sql_query = f'''
                 INSERT INTO driver (driverid, driverref, number, code, forename, surname, nationality, dob)  VALUES ('{driverid}', '{driverref}','{number}','{code}','{forename}', '{surname}', '{nationality}', '{date_of_birth}');
-            '''
+                            '''
             conn.execute(sql_query)
 
             # check user type and redirect to adequate page
@@ -263,7 +263,7 @@ def search_drivers():
 
             sql_query = f'''
                 SELECT * FROM driver where forename = '{forename}'; 
-            '''
+                            '''
             driver_info = pd.read_sql_query(sql_query, conn)
             # create a list of dict with search result
             list = driver_info.to_dict('records')
@@ -273,7 +273,7 @@ def search_drivers():
 
             sql_query = f'''
                 SELECT DISTINCT driverid from results where constructorid = {user['id']})
-            '''
+                            '''
             constructor_drivers_df = pd.read_sql_query(sql_query, conn)
 
             constructor_drivers = constructor_drivers_df.to_dict('list')
@@ -309,7 +309,7 @@ def report_one():
         join status s on results.statusid = s.statusid
     group by grouping sets (s.status)
     order by (s.status)
-    '''
+                    '''
     report_result = pd.read_sql_query(sql_query, conn)
     html = report_result.to_html(border=0, classes='')
 
@@ -337,7 +337,7 @@ def report_two():
             ) AS A
         ) AS A
         ORDER BY id_geografico_cidade, nome_aeroporto
-    '''
+                    '''
     report_result = pd.read_sql_query(sql_query, conn)
     html = report_result.to_html(border=0, classes='')
 
@@ -360,7 +360,7 @@ def report_three():
 
     sql_query = f'''
         SELECT * FROM constructor_list_drivers('{constructor_ref}');
-    '''
+                    '''
     report_result = pd.read_sql_query(sql_query, conn)
     html = report_result.to_html(border=0, classes='')
 
