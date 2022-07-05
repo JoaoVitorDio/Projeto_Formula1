@@ -75,6 +75,7 @@ def logout():
     session.pop('username')
     return render_template('/login/login_form.html')
 
+
 @app.route('/submit', methods=['POST'])
 def submit():
     login = request.form['login']
@@ -196,6 +197,57 @@ def driver_view():
                            start_year=date_range.loc[0]['first_year'],
                            end_year=date_range.loc[0]['last_year'])
 
+
+@app.route('/create-constructors', methods=['GET', 'POST'])
+def create_constructors():
+    if 'admin' != check_permission():
+        return render_template('generic_error.html', message='User not allowed to see this content')
+    else:
+        if request.method == 'GET':
+            return render_template('admin/create_constructors.html')
+        else:
+            constructor_ref = request.form['constructor_ref']
+            constructorid = request.form['constructorid']
+            name = request.form['name']
+            nationality = request.form['nationality']
+            url = request.form['url']
+
+            sql_query = f'''
+                INSERT INTO constructors (constructorid, constructorref, name, nationality, url)  VALUES ('{constructorid}', '{constructor_ref}','{name}','{nationality}','{url}');
+            '''
+            conn.execute(sql_query)
+
+            # check user type and redirect to adequate page
+            user_type = check_permission()
+            return redirect(user_type)
+
+
+
+@app.route('/create-drivers', methods=['GET', 'POST'])
+def create_drivers():
+    if 'admin' != check_permission():
+        return render_template('generic_error.html', message='User not allowed to see this content')
+    else:
+        if request.method == 'GET':
+            return render_template('admin/create_drivers.html')
+        else:
+            driverid = request.form['driverid']
+            driverref = request.form['driver_ref']
+            number = request.form['number']
+            code = request.form['code']
+            forename = request.form['forename']
+            surname = request.form['surname']
+            date_of_birth = request.form['date_of_birth']
+            nationality = request.form['nationality']
+
+            sql_query = f'''
+                INSERT INTO driver (driverid, driverref, number, code, forename, surname, nationality, dob)  VALUES ('{driverid}', '{driverref}','{number}','{code}','{forename}', '{surname}', '{nationality}', '{date_of_birth}');
+            '''
+            conn.execute(sql_query)
+    
+            # check user type and redirect to adequate page
+            user_type = check_permission()
+            return redirect(user_type)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
