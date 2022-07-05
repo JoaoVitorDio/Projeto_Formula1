@@ -297,7 +297,7 @@ def admin_reports():
     return render_template('/admin/dashboard_reports.html', name='Admin')
 
 
-@app.route('/report-01')
+@app.route('/admin/reports/report-01')
 def report_one():
     if 'admin' != check_permission():
         return render_template('generic_error.html', message='User not allowed to see this content')
@@ -316,7 +316,7 @@ def report_one():
     return render_template('generic_report.html', html=html)
 
 
-@app.route('/report-02')
+@app.route('/admin/reports/report-02')
 def report_two():
     if 'admin' != check_permission():
         return render_template('generic_error.html', message='User not allowed to see this content')
@@ -350,7 +350,7 @@ def constructor_reports():
     return render_template('/constructors/dashboard_reports.html', name=user['username'])
 
 
-@app.route('/report-03')
+@app.route('/constructor/reports/report-03')
 def report_three():
     if 'constructor' != check_permission():
         return render_template('generic_error.html', message='User not allowed to see this content')
@@ -367,7 +367,7 @@ def report_three():
     return render_template('generic_report.html', html=html)
 
 
-@app.route('/report-04')
+@app.route('/constructor/reports/report-04')
 def report_four():
     if 'constructor' != check_permission():
         return render_template('generic_error.html', message='User not allowed to see this content')
@@ -395,7 +395,7 @@ def driver_reports():
     return render_template('/driver/dashboard_reports.html', name=user['username'])
 
 
-@app.route('/report-05')
+@app.route('/driver/reports/report-05')
 def report_five():
     if 'driver' != check_permission():
         return render_template('generic_error.html', message='User not allowed to see this content')
@@ -419,7 +419,7 @@ def report_five():
     return render_template('generic_report.html', html=html)
 
 
-@app.route('/report-06')
+@app.route('/driver/reports/report-06')
 def report_six():
     if 'driver' != check_permission():
         return render_template('generic_error.html', message='User not allowed to see this content')
