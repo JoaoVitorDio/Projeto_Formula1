@@ -379,5 +379,56 @@ def report_four():
     return render_template('generic_report.html', html=html)
 
 
+@app.route('/driver/reports', methods=['GET'])
+def driver_reports():
+    name = session.get('username')
+    return render_template('/driver/dashboard_reports.html', name=name)
+
+@app.route('/report-05')
+def report_five():
+    if 'driver' != check_permission():
+        return render_template('generic_error.html', message='User not allowed to see this content')
+
+    name = session.get('username')
+    driver_ref = name[0:-2]
+
+    sql_query = f'''
+                SELECT ra.name, EXTRACT(YEAR FROM ra.date) AS race_year, COUNT(r.position) as vitorias 
+                FROM driver d JOIN results r
+                ON r.driverid = d.driverid
+                JOIN races ra ON r.raceid = ra.raceid
+                WHERE r.position = 1 AND d.driverref = '{driver_ref}'
+                GROUP BY ROLLUP(race_year, ra.name)
+                ORDER BY race_year;    
+                    '''
+
+    report_result = pd.read_sql_query(sql_query, conn)
+    html = report_result.to_html(border=0, classes='')
+
+    return render_template('generic_report.html', html=html)
+
+
+@app.route('/report-06')
+def report_six():
+    if 'driver' != check_permission():
+        return render_template('generic_error.html', message='User not allowed to see this content')
+
+    name = session.get('username')
+    driver_ref = name[0:-2]
+
+    sql_query = f'''
+            SELECT s.status as status, count(*) as count from results r
+                inner join status s on r.statusid = s.statusid
+                -- o driverid deve ser o originalid cadastrado na tabela 
+                -- user para o usuario que for do type 'Piloto'
+                where r.driverid =  (SELECT driverid FROM driver WHERE driverref = '{driver_ref}')
+                group by s.status
+                    '''
+
+    report_result = pd.read_sql_query(sql_query, conn)
+    html = report_result.to_html(border=0, classes='')
+
+    return render_template('generic_report.html', html=html)
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
