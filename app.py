@@ -47,9 +47,9 @@ def execute_sql_query_from_file(filename):
 
 
 def check_permission():
-    if 'username' in session:
-        name = session.get('username')
+    name = session.get('username', None)
 
+    if name:
         if name.endswith('_c'):
             return 'constructor'
         elif name.endswith('_d'):
@@ -62,8 +62,18 @@ def check_permission():
 
 @app.route('/')
 def index():
-    return render_template('/login/login_form.html')
+    name = session.get('username', None)
 
+    if name:
+        return redirect(check_permission())
+    else:
+        return render_template('/login/login_form.html')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username')
+    return render_template('/login/login_form.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():

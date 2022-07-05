@@ -1,7 +1,7 @@
 {% extends "index.html" %}
 {% block content %}
 <h1>Constructor View</h1>
-<p>Hello, {{ name }}</p>
+<p>Hello, {{ name }}. It's not you? <a href="{{ url_for('.logout') }}">logout</a></p>
 <h2>Overview</h2>
 <table>
     <thead>
