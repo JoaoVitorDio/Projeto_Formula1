@@ -7,7 +7,7 @@ Link do repositório: https://github.com/JoaoVitorDio/Projeto_Formula1
 ### Como executar
 #### Pré-Requisitos
 * PostgreSQL e PgAdmin4;
-* Configure as três variáveis de ambiente necessárias para o projeto em uma cópia do arquivo .env.sample:
+* Configure as três variáveis de ambiente necessárias para o projeto em uma cópia do arquivo .env.sample (nomeie esta cópia como ".env"):
 	*  DATABASE_NAME = 'nome_da_base_de_dados_criada_no_postgres'
 	* DATABASE_PASSWORD = 'senha_do_usuario_no_servidor_do_banco_de_dados'
 	* DATABASE_USERNAME = 'usuario_do_postgres'
@@ -20,3 +20,4 @@ Link do repositório: https://github.com/JoaoVitorDio/Projeto_Formula1
 * Execute todo o código `CreateUsersTableAndLoad.py`.
 * Volte ao diretório principal e execute o arquivo `app.py`.
 * Abra o navegador na seguinte `URL: Localhost:5000`.
+* Execute os arquivos no diretório `Setup` que contenham criação de funções, tabelas, views ou triggers no PgAdmin4.
