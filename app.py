@@ -272,7 +272,7 @@ def search_drivers():
             constructor_ref = user['user_ref']
 
             sql_query = f'''
-                SELECT DISTINCT driverid from results where constructorid = {user['id']})
+                SELECT DISTINCT driverid from results where constructorid = {user['id']}
                             '''
             constructor_drivers_df = pd.read_sql_query(sql_query, conn)
 
