@@ -20,4 +20,4 @@ Link do repositório: https://github.com/JoaoVitorDio/Projeto_Formula1
 * Execute todo o código `CreateUsersTableAndLoad.py`.
 * Volte ao diretório principal e execute o arquivo `app.py`.
 * Abra o navegador na seguinte `URL: Localhost:5000`.
-* Execute os arquivos no diretório `OverviewFunctions` no PgAdmin4 para criar as funções utilizadas.
+* Execute os arquivos no diretório `Setup` que contenham criação de funções, tabelas, views ou triggers no PgAdmin4.
