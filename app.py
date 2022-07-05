@@ -39,13 +39,6 @@ app = Flask(__name__)
 app.secret_key = 'super_secret'
 
 
-def execute_sql_query_from_file(filename):
-    sql = open(f'{basedir}/setup/Reports/{filename}', 'r')
-    df = read_sql_query(sql.read(), conn)
-    sql.close()
-    return df
-
-
 def check_permission():
     name = session.get('username', None)
 
@@ -300,7 +293,15 @@ def report_one():
     if 'admin' != check_permission():
         return render_template('generic_error.html', message='User not allowed to see this content')
 
-    report_result = execute_sql_query_from_file('Report1.txt')
+    sql_query = f'''
+    select
+        s.status, count(*)
+    from results
+        join status s on results.statusid = s.statusid
+    group by grouping sets (s.status)
+    order by (s.status)
+    '''
+    report_result = pd.read_sql_query(sql_query, conn)
     html = report_result.to_html(border=0, classes='')
 
     return render_template('generic_report.html', html=html)
@@ -384,6 +385,7 @@ def driver_reports():
     name = session.get('username')
     return render_template('/driver/dashboard_reports.html', name=name)
 
+
 @app.route('/report-05')
 def report_five():
     if 'driver' != check_permission():
@@ -429,6 +431,7 @@ def report_six():
     html = report_result.to_html(border=0, classes='')
 
     return render_template('generic_report.html', html=html)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
