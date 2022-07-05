@@ -222,7 +222,6 @@ def create_constructors():
             return redirect(user_type)
 
 
-
 @app.route('/create-drivers', methods=['GET', 'POST'])
 def create_drivers():
     if 'admin' != check_permission():
@@ -244,10 +243,48 @@ def create_drivers():
                 INSERT INTO driver (driverid, driverref, number, code, forename, surname, nationality, dob)  VALUES ('{driverid}', '{driverref}','{number}','{code}','{forename}', '{surname}', '{nationality}', '{date_of_birth}');
             '''
             conn.execute(sql_query)
-    
+
             # check user type and redirect to adequate page
             user_type = check_permission()
             return redirect(user_type)
+
+
+@app.route('/search-drivers', methods=['GET', 'POST'])
+def search_drivers():
+    if 'constructor' != check_permission():
+        return render_template('generic_error.html', message='User not allowed to see this content')
+    else:
+        if request.method == 'GET':
+            return render_template('constructors/search_driver.html')
+        else:
+            forename = request.form['forename']
+
+            sql_query = f'''
+                SELECT * FROM driver where forename = '{forename}'; 
+            '''
+            driver_info = pd.read_sql_query(sql_query, conn)
+            # create a list of dict with search result
+            list = driver_info.to_dict('records')
+
+            name = session.get('username')
+            constructor_ref = name[0:-2]
+
+            sql_query = f'''
+                SELECT DISTINCT driverid from results where constructorid = (select constructorid from constructors where constructorref = '{constructor_ref}')
+            '''
+            constructor_drivers_df = pd.read_sql_query(sql_query, conn)
+
+            constructor_drivers = constructor_drivers_df.to_dict('list')
+
+            result_set = [
+                driver
+                for driver
+                in list
+                if driver.get('driverid') in constructor_drivers['driverid']
+            ]
+
+            return render_template('/constructors/search_results.html', drivers=result_set)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
