@@ -272,7 +272,7 @@ def search_drivers():
             constructor_ref = user['user_ref']
 
             sql_query = f'''
-                SELECT DISTINCT driverid from results where constructorid = (select constructorid from constructors where constructorref = '{constructor_ref}')
+                SELECT DISTINCT driverid from results where constructorid = {user['id']})
             '''
             constructor_drivers_df = pd.read_sql_query(sql_query, conn)
 
@@ -346,8 +346,8 @@ def report_two():
 
 @app.route('/constructor/reports', methods=['GET'])
 def constructor_reports():
-    name = session.get('username')
-    return render_template('/constructors/dashboard_reports.html', name=name)
+    user = session.get('user')
+    return render_template('/constructors/dashboard_reports.html', name=user['username'])
 
 
 @app.route('/report-03')
