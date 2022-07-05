@@ -40,7 +40,7 @@ app.secret_key = 'super_secret'
 
 
 def execute_sql_query_from_file(filename):
-    sql = open(filename, 'r')
+    sql = open(f'{basedir}/setup/Reports/{filename}', 'r')
     df = read_sql_query(sql.read(), conn)
     sql.close()
     return df
@@ -284,6 +284,54 @@ def search_drivers():
             ]
 
             return render_template('/constructors/search_results.html', drivers=result_set)
+
+
+@app.route('/admin/reports', methods=['GET', 'POST'])
+def admin_reports():
+    if request.method == 'POST':
+        city_name = request.form['city_name']
+        return redirect(f'/report-02?city_name={city_name}')
+
+    return render_template('/admin/dashboard_reports.html', name='Admin')
+
+
+@app.route('/report-01')
+def report_one():
+    if 'admin' != check_permission():
+        return render_template('generic_error.html', message='User not allowed to see this content')
+
+    report_result = execute_sql_query_from_file('Report1.txt')
+    html = report_result.to_html(border=0, classes='')
+
+    return render_template('/admin/report1.html', html=html)
+
+
+@app.route('/report-02')
+def report_two():
+    if 'admin' != check_permission():
+        return render_template('generic_error.html', message='User not allowed to see this content')
+
+    city_name = request.args.get('city_name', None)
+    sql_query = f'''
+    SELECT *
+        FROM (
+            SELECT *, ROW_NUMBER() OVER (PARTITION BY nome_aeroporto ORDER BY earth_distance) as RN 
+            FROM (
+                SELECT A.nome_aeroporto, A.tipo_aeroporto, A.name_cidade as cidade_aeroporto, A.IATA_code,
+                A.name_pais, A.continente_pais, C.name as name_cidade, earth_distance (ll_to_earth(A.latitude, A.longitude), ll_to_earth(C.lat , C.long)),
+                    C.population, C.geonameid as id_geografico_cidade
+                    FROM aeroportos_brasileiros		AS A
+                    INNER JOIN geocities15k 		AS C
+                    ON (earth_distance (ll_to_earth(A.latitude, A.longitude), ll_to_earth(C.lat , C.long))) < 100000
+                    where C.name = '{city_name}'
+            ) AS A
+        ) AS A
+        ORDER BY id_geografico_cidade, nome_aeroporto
+    '''
+    report_result = pd.read_sql_query(sql_query, conn)
+    html = report_result.to_html(border=0, classes='')
+
+    return render_template('/admin/report2.html', html=html)
 
 
 if __name__ == "__main__":
