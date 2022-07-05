@@ -1,0 +1,6 @@
+SELECT s.status as status, count(*) as count from results r
+	inner join status s on r.statusid = s.statusid
+	-- o driverid deve ser o originalid cadastrado na tabela 
+	-- user para o usuario que for do type 'Piloto'
+	where r.driverid = 1
+	group by s.status
