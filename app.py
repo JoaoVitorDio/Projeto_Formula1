@@ -334,5 +334,50 @@ def report_two():
     return render_template('generic_report.html', html=html)
 
 
+@app.route('/constructor/reports', methods=['GET'])
+def constructor_reports():
+    name = session.get('username')
+    return render_template('/constructors/dashboard_reports.html', name=name)
+
+
+@app.route('/report-03')
+def report_three():
+    if 'constructor' != check_permission():
+        return render_template('generic_error.html', message='User not allowed to see this content')
+
+    name = session.get('username')
+    constructor_ref = name[0:-2]
+
+    sql_query = f'''
+        SELECT * FROM constructor_list_drivers('{constructor_ref}');
+    '''
+    report_result = pd.read_sql_query(sql_query, conn)
+    html = report_result.to_html(border=0, classes='')
+
+    return render_template('generic_report.html', html=html)
+
+
+@app.route('/report-04')
+def report_four():
+    if 'constructor' != check_permission():
+        return render_template('generic_error.html', message='User not allowed to see this content')
+
+    name = session.get('username')
+    constructor_ref = name[0:-2]
+
+    sql_query = f'''
+                SELECT s.status as status, count(*) as count from results r
+                    inner join status s on r.statusid = s.statusid
+                    -- o constructorid deve ser o originalid cadastrado na tabela 
+                    -- user para o usuario que for do type 'Escuderia'
+                    where r.constructorid = (SELECT constructorid FROM constructors WHERE constructorref = '{constructor_ref}')
+                    group by s.status    
+                    '''
+    report_result = pd.read_sql_query(sql_query, conn)
+    html = report_result.to_html(border=0, classes='')
+
+    return render_template('generic_report.html', html=html)
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
