@@ -303,7 +303,7 @@ def report_one():
     report_result = execute_sql_query_from_file('Report1.txt')
     html = report_result.to_html(border=0, classes='')
 
-    return render_template('/admin/report1.html', html=html)
+    return render_template('generic_report.html', html=html)
 
 
 @app.route('/report-02')
@@ -331,7 +331,7 @@ def report_two():
     report_result = pd.read_sql_query(sql_query, conn)
     html = report_result.to_html(border=0, classes='')
 
-    return render_template('/admin/report2.html', html=html)
+    return render_template('generic_report.html', html=html)
 
 
 if __name__ == "__main__":
