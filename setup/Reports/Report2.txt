@@ -1,12 +1,12 @@
 CREATE OR REPLACE VIEW aeroportos_brasileiros AS
-	SELECT a.name as nome_aeroporto, a.type as tipo_aeroporto, a.iatacode as IATA_code, a.latdeg as latitude, a.longdeg as longitude, 
-	b.name as name_pais, b.continent as continente_pais, 
+	SELECT a.name as nome_aeroporto, a.type as tipo_aeroporto, a.iatacode as IATA_code, a.latdeg as latitude, a.longdeg as longitude,
+	b.name as name_pais, b.continent as continente_pais,
 	c.name as name_cidade, c.population as populacao_cidade
 	FROM 		AIRPORTS 	AS a
 	INNER JOIN COUNTRIES 	AS b
 	ON a.isocountry = b.code
 	INNER JOIN GEOCITIES15k	AS c
-	ON a.city = c.name and c.country = b.code 
+	ON a.city = c.name and c.country = b.code
 	-- Essa ultima verificacao é necessaria porque cidades de países diferentes podem ter o mesmo nome
 	WHERE b.name = 'Brazil' and a.type in ('medium_airport ','large_airport  ')
 
@@ -16,7 +16,7 @@ CREATE OR REPLACE VIEW aeroportos_brasileiros AS
 CREATE EXTENSION IF NOT EXISTS Cube;
 CREATE EXTENSION IF NOT EXISTS EarthDistance;
 
-SELECT * 
+SELECT *
 FROM (
 	SELECT *, ROW_NUMBER() OVER (PARTITION BY nome_aeroporto ORDER BY earth_distance) as RN 
 	FROM (
