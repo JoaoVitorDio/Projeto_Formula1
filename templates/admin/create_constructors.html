@@ -1,0 +1,19 @@
+{% extends "index.html" %}
+{% block content %}
+<form method="POST">
+    <label for="constructorid">Constructor ID:</label><br>
+    <input type="text" id="constructorid" name="constructorid">
+    <label for="constructor_ref">Constructor Ref:</label><br>
+    <input type="text" id="constructor_ref" name="constructor_ref">
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name">
+    <label for="nationality">Nationality:</label><br>
+    <input type="text" id="nationality" name="nationality">
+    <label for="url">URL:</label><br>
+    <input type="text" id="url" name="url">
+    <button class="button">
+        Send
+    </button>
+</form>
+{% endblock %}
+

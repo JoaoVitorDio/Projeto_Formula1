@@ -1,0 +1,22 @@
+{% extends "index.html" %}
+{% block content %}
+<h2> Search results </h2>
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Nationality</th>
+        <th>Date of birth</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for driver in drivers %}
+    <tr>
+        <td>{{ driver.forename + ' ' + driver.surname }}</td>
+        <td>{{ driver.nationality }}</td>
+        <td>{{ driver.dob }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+{% endblock %}
+

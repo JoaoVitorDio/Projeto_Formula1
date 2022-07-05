@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+{% block content %}
+<h1>Admin View</h1>
+<p>Hello, {{ name }}. It's not you? <a href="{{ url_for('.logout') }}">logout</a></p>
+
+<h2>Reports</h2>
+<details>
+    <summary>Report 01</summary>
+    <p>Show total amount of results for each 'status'.</p>
+    <a href="{{ url_for('.report_one') }}"> <button>Go to report</button> </a>
+
+</details>
+<details>
+    <summary>Report 02</summary>
+    <p>Show brazilian airports for a city.</p>
+
+    <form method="POST">
+        <label for="city_name">City Name:</label><br>
+        <input type="text" id="city_name" name="city_name">
+
+         <a href="{{ url_for('.report_two', city_name=request.form['city_name']) }}">
+        <button class="button">
+            Send
+        </button>
+         </a>
+    </form>
+</details>
+
+{% endblock %}
+

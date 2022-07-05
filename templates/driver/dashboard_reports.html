@@ -1,0 +1,20 @@
+{% extends "index.html" %}
+{% block content %}
+<h1>Driver View</h1>
+<p>Hello, {{ name }}. It's not you? <a href="{{ url_for('.logout') }}">logout</a></p>
+
+<h2>Reports</h2>
+<details>
+    <summary>Report 05</summary>
+    <p>List driver victoriies.</p>
+    <a href="{{ url_for('.report_five') }}"> <button>Go to report</button> </a>
+
+</details>
+<details>
+    <summary>Report 06</summary>
+    <p>Show result status.</p>
+    <a href="{{ url_for('.report_six') }}"> <button>Go to report</button> </a>
+</details>
+
+{% endblock %}
+
