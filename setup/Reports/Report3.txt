@@ -17,21 +17,3 @@ begin
 		);
 end;
 $$;
-
-
------------------------------------------
--- Consultar pilotos do escudeiro
---drop function constructor_query_driver(constructor_name varchar, forename text, surname text, dob date, nationality text);
-create function constructor_query_driver(constructor_name varchar, out forename text, out surname text, out dob date, out nationality text) 
-returns setof record
-language plpgsql as $$
-begin
-    return query (
-		select d.forename,d.surname,d.dob,d.nationality
-			from driver as d
-			where driverid 
-			in(	select driverid from results where constructorid in(select constructorid from constructors where constructorref = constructor_name))
-			order by driverid
-		);
-end;
-$$;
