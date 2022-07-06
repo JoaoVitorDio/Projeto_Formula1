@@ -1,14 +1,10 @@
-DROP INDEX Idx_constructor_id
+--DROP INDEX Idx_constructor_id
 CREATE INDEX Idx_constructor_id on results(constructorid)
---INDEX para todos as consultas feitas na funcao?
 
---Fazer pesquisa pelo nome ou id?
-drop function constructor_list_drivers(constructor_name varchar, forename text, surname text, victories bigint);
-create function constructor_list_drivers(constructor_name varchar, out forename text, out surname text, out victories bigint) returns setof record
-language plpgsql
-as
-
-$$
+--drop function constructor_list_drivers(constructor_name varchar, forename text, surname text, victories bigint);
+create function constructor_list_drivers(constructor_name varchar, out forename text, out surname text, out victories bigint) 
+returns setof record
+language plpgsql as $$
 begin
     return query (
 		select d.forename,d.surname, count(d.driverid) as victories
@@ -25,12 +21,10 @@ $$;
 
 -----------------------------------------
 -- Consultar pilotos do escudeiro
-drop function constructor_query_driver(constructor_name varchar, forename text, surname text, dob date, nationality text);
-create function constructor_query_driver(constructor_name varchar, out forename text, out surname text, out dob date, out nationality text) returns setof record
-language plpgsql
-as
-
-$$
+--drop function constructor_query_driver(constructor_name varchar, forename text, surname text, dob date, nationality text);
+create function constructor_query_driver(constructor_name varchar, out forename text, out surname text, out dob date, out nationality text) 
+returns setof record
+language plpgsql as $$
 begin
     return query (
 		select d.forename,d.surname,d.dob,d.nationality

@@ -1,7 +1,10 @@
+CREATE INDEX IdxForename ON driver USING BTREE (forename);
+-- Utilizamos btree porque vários pilotos podem ter o mesmo forename, o que beneficia
+-- a estrutura ordenada da árvore balanceada.
 SELECT ra.name, EXTRACT(YEAR FROM ra.date) AS race_year, COUNT(r.position) as vitorias 
-FROM driver d JOIN results r
-ON r.driverid = d.driverid
-JOIN races ra ON r.raceid = ra.raceid
-WHERE r.position = 1 AND d.forename = 'Lewis'
-GROUP BY ROLLUP(race_year, ra.name)
-ORDER BY race_year;
+	FROM driver d JOIN results r
+	ON r.driverid = d.driverid
+	JOIN races ra ON r.raceid = ra.raceid
+	WHERE r.position = 1 AND d.forename = 'Lewis'
+	GROUP BY ROLLUP(race_year, ra.name)
+	ORDER BY race_year;
