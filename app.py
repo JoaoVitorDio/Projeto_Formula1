@@ -305,7 +305,7 @@ def search_drivers():
 def admin_reports():
     if request.method == 'POST':
         city_name = request.form['city_name']
-        return redirect(f'/report-02?city_name={city_name}')
+        return redirect(f'/admin/reports/report-02?city_name={city_name}')
 
     return render_template('/admin/dashboard_reports.html', name='Admin')
 
