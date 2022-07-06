@@ -16,3 +16,39 @@ CREATE TABLE IF NOT EXISTS log_table(
 
 --SELECT * FROM USERS	
 --UPDATE users SET password = MD5(CONCAT(password, user_id))
+
+
+CREATE OR REPLACE FUNCTION update_users_driver() RETURNS trigger AS $update_users_driver$
+	DECLARE
+	_userid INTEGER;
+	BEGIN 
+		SELECT MAX(userid) FROM users INTO _userid;
+		SELECT _userid + 1 INTO _userid;
+		INSERT INTO users (userid, login, password, tipo, idoriginal)
+		VALUES (_userid, CONCAT(NEW.driverref,'_d'), 
+				MD5(CONCAT(NEW.driverref, _userid)), 'Piloto', NEW.driverid);
+		RETURN NEW;
+	END;
+$update_users_driver$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER trigger_update_users_driver
+	AFTER INSERT ON driver
+	FOR EACH ROW EXECUTE PROCEDURE update_users_driver();
+	
+CREATE OR REPLACE FUNCTION update_users_constructors() RETURNS trigger AS $update_users_constructors$
+	DECLARE
+	_userid INTEGER;
+	BEGIN 
+		SELECT MAX(userid) FROM users INTO _userid;
+		SELECT _userid + 1 INTO _userid;
+		INSERT INTO users (userid, login, password, tipo, idoriginal)
+		VALUES (_userid, CONCAT(NEW.constructorref,'_c'), 
+				MD5(CONCAT(NEW.constructorref, _userid)), 'Escuderia', NEW.constructorid);
+		RETURN NEW;
+	END;
+$update_users_constructors$ LANGUAGE plpgsql;	
+
+	
+CREATE OR REPLACE TRIGGER trigger_update_users_constructors
+	AFTER INSERT ON constructors
+	FOR EACH ROW EXECUTE PROCEDURE update_users_constructors(); 

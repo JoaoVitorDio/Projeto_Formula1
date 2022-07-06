@@ -208,8 +208,15 @@ def create_constructors():
         if request.method == 'GET':
             return render_template('admin/create_constructors.html')
         else:
+
+            # determine driver_id
+            sql_query = f'''
+                SELECT MAX(constructorid) FROM constructors;
+                            '''
+            id_result = pd.read_sql_query(sql_query, conn)
+
+            constructorid = id_result.loc[0]['max'] + 1
             constructor_ref = request.form['constructor_ref']
-            constructorid = request.form['constructorid']
             name = request.form['name']
             nationality = request.form['nationality']
             url = request.form['url']
@@ -232,7 +239,13 @@ def create_drivers():
         if request.method == 'GET':
             return render_template('admin/create_drivers.html')
         else:
-            driverid = request.form['driverid']
+            # determine driver_id
+            sql_query = f'''
+                SELECT MAX(driverid) FROM driver;
+                            '''
+            id_result = pd.read_sql_query(sql_query, conn)
+
+            driverid = id_result.loc[0]['max'] + 1
             driverref = request.form['driver_ref']
             number = request.form['number']
             code = request.form['code']
@@ -292,7 +305,7 @@ def search_drivers():
 def admin_reports():
     if request.method == 'POST':
         city_name = request.form['city_name']
-        return redirect(f'/report-02?city_name={city_name}')
+        return redirect(f'/admin/reports/report-02?city_name={city_name}')
 
     return render_template('/admin/dashboard_reports.html', name='Admin')
 
