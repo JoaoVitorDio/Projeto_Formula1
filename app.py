@@ -3,6 +3,7 @@ import pandas as pd
 from flask.cli import load_dotenv
 from sqlalchemy import create_engine
 from flask import Flask, render_template, request, redirect, session
+import datetime
 
 # Creating environment based on .env file
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -93,6 +94,13 @@ def submit():
         }
         # check user type and redirect to adequate page
         user_type = check_permission()
+
+
+        sql_query = f'''
+            INSERT INTO log_table VALUES (DEFAULT,{df.loc[0].userid}, '{datetime.datetime.now()}');
+                        '''
+        conn.execute(sql_query)
+        
         return redirect(user_type)
 
     else:

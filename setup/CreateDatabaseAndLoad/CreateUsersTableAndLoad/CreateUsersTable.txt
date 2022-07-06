@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS log_table(
 
 --SELECT * FROM USERS	
 --UPDATE users SET password = MD5(CONCAT(password, user_id))
+-- SELECT * FROM log_table LEFT JOIN users ON log_table.userid = users.userid
 
 
 CREATE OR REPLACE FUNCTION update_users_driver() RETURNS trigger AS $update_users_driver$
