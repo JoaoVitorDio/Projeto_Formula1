@@ -1,6 +1,10 @@
 CREATE INDEX IdxNameCity ON GEOCITIES15k USING BTREE (name);
 -- Utilizamos btree porque retornaremos o resultado para várias cidades com o mesmo nome, de forma que 
 -- nos beneficiamos da estrutura ordenada da árvore balanceada.
+CREATE INDEX IdxBrasil ON COUNTRIES(name)
+	WHERE name = 'Brazil'
+-- Criamos um índice no país Brazil para que a view não materializada se torne mais rápida
+
 CREATE OR REPLACE VIEW aeroportos_brasileiros AS
 	SELECT a.name as nome_aeroporto, a.type as tipo_aeroporto, a.iatacode as IATA_code, a.latdeg as latitude, a.longdeg as longitude,
 	b.name as name_pais, b.continent as continente_pais,
