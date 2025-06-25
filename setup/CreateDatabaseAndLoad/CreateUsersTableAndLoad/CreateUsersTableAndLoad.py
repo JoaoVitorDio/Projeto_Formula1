@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from sqlalchemy import create_engine, text
-from flask.cli import load_dotenv
+from dotenv import load_dotenv
 
 
 #Reading environment variables to get database name and password
@@ -57,5 +57,6 @@ df.to_sql('users', engine, if_exists='append', index=False)
 # Encrypting passwords with md5 from postgres
 sql_text = text('''UPDATE users SET password = MD5(CONCAT(Password, UserID))''')
 result = conn.execute(sql_text)
+conn.commit()
 
 conn.close()
