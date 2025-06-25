@@ -1,5 +1,5 @@
 --DROP INDEX Idx_constructor_id
-CREATE INDEX Idx_constructor_id on results(constructorid)
+CREATE INDEX Idx_constructor_id on results(constructorid);
 
 --drop function constructor_list_drivers(constructor_name varchar, forename text, surname text, victories bigint);
 create function constructor_list_drivers(constructor_name varchar, out forename text, out surname text, out victories bigint) 
