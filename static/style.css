@@ -1,0 +1,5 @@
+body {
+  max-width: 80%;
+  margin: 0 auto; /* optional, centers content if you want */
+  padding: 0 1rem; /* optional, some horizontal padding */
+}
