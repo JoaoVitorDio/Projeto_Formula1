@@ -1,7 +1,7 @@
 import os
 import pandas as pd
-from flask.cli import load_dotenv
-from sqlalchemy import create_engine
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 from flask import Flask, render_template, request, redirect, session
 import datetime
@@ -84,7 +84,7 @@ def submit():
     df = pd.read_sql_query(sqlQuery, conn)
 
     if len(df.index) > 0:
-        user_list = df.to_dict('record')
+        user_list = df.to_dict('records')
         # saves username into session
 
         session['user'] = {
@@ -100,7 +100,7 @@ def submit():
         sql_query = f'''
             INSERT INTO log_table VALUES (DEFAULT,{df.loc[0].userid}, '{datetime.datetime.now()}');
                         '''
-        conn.execute(sql_query)
+        conn.execute(text(sql_query))
         
         return redirect(user_type)
 
@@ -234,7 +234,7 @@ def create_constructors():
                 sql_query = f'''
                     INSERT INTO constructors (constructorid, constructorref, name, nationality, url)  VALUES ('{constructorid}', '{constructor_ref}','{name}','{nationality}','{url}');
                                 '''
-                conn.execute(sql_query)
+                conn.execute(text(sql_query))
                 
             except SQLAlchemyError as e:
                 error = str(e.__dict__['orig'])
@@ -271,7 +271,7 @@ def create_drivers():
                 sql_query = f'''
                     INSERT INTO driver (driverid, driverref, number, code, forename, surname, nationality, dob)  VALUES ('{driverid}', '{driverref}','{number}','{code}','{forename}', '{surname}', '{nationality}', '{date_of_birth}');
                                 '''
-                conn.execute(sql_query)
+                conn.execute(text(sql_query))
             except SQLAlchemyError as e:
                 error = str(e.__dict__['orig'])
                 return render_template('generic_error.html', message=error)
