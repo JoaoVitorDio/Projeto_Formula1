@@ -1,14 +1,15 @@
 {% extends "index.html" %}
 {% block content %}
-<form action="/submit" method="POST">
+<div style="display: flex; justify-content: center;">
+<form action="/submit" method="POST" style="text-align: left; width: 300px;">
     <label for="login">Login:</label><br>
-    <input type="text" id="login" name="login">
-    <label for="password">Password:</label><br>
-    <input type="password" id="password" name="password">
+    <input type="text" style="width: 100%;  padding-right: 0px; padding-left: 0px;" id="login" name="login"><br><br>
 
-    <button class="button">
-        Send
-    </button>
+    <label for="password">Password:</label><br>
+    <input type="password" style="width: 100%; padding-right: 0px; padding-left: 0px;" id="password" name="password"><br><br>
+
+    <button class="button" style="width: 100%;">Send</button>
 </form>
+</div>
 {% endblock %}
 
