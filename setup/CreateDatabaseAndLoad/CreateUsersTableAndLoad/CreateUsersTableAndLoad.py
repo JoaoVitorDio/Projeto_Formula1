@@ -38,6 +38,7 @@ conn = engine.connect()
 #Creating the systems admin
 sql_text = text("INSERT INTO users VALUES (DEFAULT,'admin','admin','Administrador',NULL)")
 result = conn.execute(sql_text)
+conn.commit()
 
 
 # Inserting driver already signed into users table

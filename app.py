@@ -101,6 +101,7 @@ def submit():
             INSERT INTO log_table VALUES (DEFAULT,{df.loc[0].userid}, '{datetime.datetime.now()}');
                         '''
         conn.execute(text(sql_query))
+        conn.commit()
         
         return redirect(user_type)
 
@@ -235,6 +236,7 @@ def create_constructors():
                     INSERT INTO constructors (constructorid, constructorref, name, nationality, url)  VALUES ('{constructorid}', '{constructor_ref}','{name}','{nationality}','{url}');
                                 '''
                 conn.execute(text(sql_query))
+                conn.commit()
                 
             except SQLAlchemyError as e:
                 error = str(e.__dict__['orig'])
@@ -272,6 +274,7 @@ def create_drivers():
                     INSERT INTO driver (driverid, driverref, number, code, forename, surname, nationality, dob)  VALUES ('{driverid}', '{driverref}','{number}','{code}','{forename}', '{surname}', '{nationality}', '{date_of_birth}');
                                 '''
                 conn.execute(text(sql_query))
+                conn.commit()
             except SQLAlchemyError as e:
                 error = str(e.__dict__['orig'])
                 return render_template('generic_error.html', message=error)
